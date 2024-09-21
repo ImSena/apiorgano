@@ -5,7 +5,6 @@ export const verifyToken = (req, res, next)=>{
 
     jwt.verify(token, process.env.SECRET_KEY, (err, decoded)=>{
         if(err) return res.status(401).end();
-
         req.userId = decoded.userId;
         next();
     })
