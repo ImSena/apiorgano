@@ -73,6 +73,25 @@ class Team
             throw new Error(error.message);   
         }
     }
+
+    async readTeamWithCollaborator(id_team)
+    {
+        try{
+            const teamWithCollaborator = await this.prisma.team.findMany({
+                where:{
+                    id_team,
+                    id_user: this.id_user
+                },
+                include:{
+                    collaborators: true
+                }
+            })
+
+            return teamWithCollaborator;
+        }catch(error){
+            throw new Error(error.message);
+        }
+    }
 }
 
 export default Team;

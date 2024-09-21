@@ -1,97 +1,73 @@
-const collaborators = [
-    {
-        "id": 3,
-        "name":"Anna Beat",
-        "position": "co-CEO",
-        "time": "CEO",
-        "image": "https:"
-      },
-      {
-        "name":"Bruno",
-        "position": "CEO",
-        "time": "CEO",
-        "image": "https:"
-      },
-      {
-        "name":"Anna Beat",
-        "position": "co-CEO",
-        "time": "CEO",
-        "image": "https:"
-      }
-]
+import Collaborator from "../model/Collaborator.js";
 
-export const createCollaborator = (req, res)=>{
-    //req.params.id
-    const {name,position, time, image } = req.body
-    const id = collaborators.length;
+export const createCollaborator = async (req, res) => {
 
-    const newCollaborator = {
-        id,
-        name, 
-        position,
-        time,
-        image
+    try {
+        const { name, cargo, id_time, url_image } = req.body
+        const id_user = req.userId;
+
+        const datas = [name, cargo, id_time, url_image];
+
+        datas.forEach((value) =>{
+            if(value === undefined || value === null || value === ''){
+                throw new Error("Params are undefined, null or not exists");   
+            }
+        })
+
+        const CollaboratorModel = new Collaborator(id_user);
+
+        await CollaboratorModel.create(name, cargo, id_time, url_image);
+
+        return res.status(201).json({message: 'Collaborator created successfully'});
+    } catch (error) {
+        return res.status(400).json({message: error.message});
     }
-
-    collaborators.push(newCollaborator);
-
-    res.status(201).end();
 }
 
-export const getCollaborator = (req, res)=>{
-    const {id} = req.params;
+export const getCollaborators = async (req, res) => {
+    try{
+        const id_user = req.userId;
+        const {id_team} = req.body;
 
-    const collaborator = collaborators.find((c)=> c.id == id)
+        const CollaboratorModel = new Collaborator(id_user);
 
-    if(!collaborator){
-        res.status(404).json({message: "Collaborator not exists"});
+        const collaboratos = await CollaboratorModel.read(id_team);
+
+        return res.status(200).json(collaboratos);
+    }catch(error){
+        return res.status(400).json({message: error.message});
     }
-
-    res.status(200).json(collaborator);
 }
 
-export const deleteCollaborator = (req, res)=>{
-    const {id} = req.params;
+export const updateCollaborator = async (req, res) => {
+    try{
+        const {id_collaborator,name, cargo, url_image } = req.body;
+        const id_user = req.userId;
 
-    const indexToRemove = collaborators.findIndex(c => c.id === parseInt(id, 10));
+        const CollaboratorModel = new Collaborator(id_user);
 
-    if(indexToRemove === -1){
-        res.status(400).json({message: "Bad Request to delete Collaborator"});
+        await CollaboratorModel.update(id_collaborator, name, cargo, url_image);
+
+        return res.status(200).json({message: 'Collaborator Updated successfully'})
+    }catch(error){
+        return res.status(400).json({message: error.message});
     }
-
-    collaborators.splice(indexToRemove, 1);
-    res.status(204).end();
 }
 
-export const updateCollaborator = (req, res) =>{
-    const {name,position, time, image } = req.body
-    const {id} = req.params;
+export const deleteCollaborator = async (req, res) => {
 
-    const indexToUpdate = collaborators.findIndex(c => c.id === parseInt(id, 10));
+    try{
+        const id_user = req.userId;
+        const {id_collaborator} = req.body;
 
-    if(indexToUpdate === -1){
-        res.status(400).json({message: "Bad Request"});
+        const CollaboratorModel = new Collaborator(id_user);
+
+        await CollaboratorModel.delete(id_collaborator);
+
+        return res.status(204)
+
+    }catch(error){
+        return res.status(400).json({message: error.message})
     }
-
-    collaborators[indexToUpdate] = {
-        id: parseInt(id, 10),
-        name, 
-        position,
-        time, 
-        image
-    };
-
-    res.status(200).json(indexToUpdate);
 }
 
-export const getAllColaborators = (req, res)=>{
-    const {time} = req.params;
-
-    const allColaborators = collaborators.filter(c => c.time == time);
-
-    if(allColaborators.length < 1){
-        res.status(400).json({message: "Bad Request"}).end();
-    }
-
-    res.status(200).json({collaborators: allColaborators});
-}

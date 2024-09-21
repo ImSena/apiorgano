@@ -35,6 +35,21 @@ export const getTeam = async (req, res) =>
     }
 }
 
+export const getTeamWithCollaborator = async (req, res)=>
+{
+    try{
+        const userId = req.userId;
+        const {id_team} = req.body;
+        const TeamModel = new Team(userId);
+
+        const team = await TeamModel.readTeamWithCollaborator(id_team);
+
+        return res.status(200).json(team);
+    }catch(error){
+        return res.send(400).json({message: error.message});
+    }
+}
+
 export const updateTeam = async (req, res) =>
 {
     try{
