@@ -40,7 +40,7 @@ class User
         }
     }
 
-    async read(email, password)
+    async login(email, password)
     {
         try{
             const user = await prisma.user.findUnique({
@@ -63,6 +63,44 @@ class User
 
         }catch(error){
             throw new Error(error.message);
+        }
+    }
+
+    async read(email)
+    {
+        try{
+            const user = await prisma.user.findUnique({
+                where:{
+                    email: email
+                }
+            })
+
+            if(!user){
+                throw new Error("Usuário não encontrado");
+            }
+
+            return user;
+
+        }catch(error){
+            throw new Error(error.message);
+        }
+    }
+
+    async changePassword(password){
+        try{
+            const hashedPassword = await bcrypt.hash(password, 10);
+    
+            await prisma.user.update({
+                where:{
+                    id_user: this.id
+                },
+                data:{
+                    password: hashedPassword
+                }
+            })
+
+        }catch(error){
+            throw new Error(error.message)
         }
     }
 }

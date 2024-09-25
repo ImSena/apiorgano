@@ -1,16 +1,19 @@
 import express from 'express';
-import { login, logout } from '../controllers/authController.js';
+import { login, logout, sendLinkResetPassword, resetPassword} from '../controllers/authController.js';
 import {register} from '../controllers/userController.js';
 import { createTeam, getTeam, updateTeam, deleteTeam, getTeamWithCollaborator } from '../controllers/teamController.js';
 import {createCollaborator,getCollaborators, deleteCollaborator, updateCollaborator} from '../controllers/collaboratorController.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
+import { verifyTokenEmail } from '../middlewares/verifyTokenEmail.js';
 
 const router = express.Router();
 
 router.post('/login', login);
 router.delete('/logout', logout);
-
 router.post('/register', register);
+
+router.post('/sendResetPassword', sendLinkResetPassword);
+router.post('/resetPassword', verifyTokenEmail ,resetPassword);
 
 
 // router.get('/time/:id', verifyToken, getTeam);

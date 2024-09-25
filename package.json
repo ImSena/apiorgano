@@ -3,7 +3,8 @@
     "@prisma/client": "^5.19.1",
     "bcrypt": "^5.1.1",
     "express": "^4.21.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.15"
   },
   "name": "apiorgano",
   "version": "1.0.0",
