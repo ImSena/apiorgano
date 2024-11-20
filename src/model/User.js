@@ -56,7 +56,7 @@ class User
             const isPasswordValid = await bcrypt.compare(password, user.password);
 
             if(!isPasswordValid){
-                throw new Error("Senha inválida");
+                throw new Error("Senha ou usuário incorretas");
             }
 
             return user;
